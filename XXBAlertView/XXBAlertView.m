@@ -77,9 +77,14 @@
 }
 - (void)show
 {
-    [[[[UIApplication sharedApplication] windows] lastObject] addSubview:self];
+    [self p_addKeyboardNote];
+    [[UIApplication sharedApplication].keyWindow addSubview:self];
     [UIView animateWithDuration:0.25 animations:^{
         self.backgroundColor = self.backgroundShowColor;
+    } completion:^(BOOL finished) {
+        if (self.alertViewStyle != XXBAlertViewStyleDefault) {
+            [self.textFiledArray[0] becomeFirstResponder];
+        }
     }];
     
 }
@@ -195,7 +200,6 @@
     [self p_craetInputView];
     [self p_creatButtons];
     [self setAlertViewStyle:XXBAlertViewStyleDefault];
-    [self p_addKeyboardNote];
 }
 - (void)p_craetInputView
 {
@@ -343,9 +347,8 @@
 {
     CGRect viewTransform =[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardEndY = viewTransform.origin.y;
-    CGFloat animationTime =[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     self.lcCenterYAlertView.constant = - (self.frame.size.height - keyboardEndY) * 0.5;
-    [UIView animateWithDuration:animationTime animations:^{
+    [UIView animateWithDuration:0.25 animations:^{
         [self layoutIfNeeded];
     }];
 }
