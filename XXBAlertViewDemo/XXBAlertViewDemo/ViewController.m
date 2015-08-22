@@ -19,7 +19,8 @@
 
 
 - (IBAction)normalAction:(UIButton *)sender {
-    XXBAlertView *alertView = [[XXBAlertView alloc] initWithTitle:@"我是标题" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定",@"取消",@"确定2",@"确定3",nil];
+    XXBAlertView *alertView = [[XXBAlertView alloc] initWithTitle:@"我是标题" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定",@"取消",nil];
+    alertView.alertViewStyle = XXBAlertViewStyleLoginAndPasswordInput;
     [alertView show];
 }
 
