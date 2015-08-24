@@ -263,9 +263,9 @@
     [_alertView addConstraint:lcWidthAlertView];
     [self addConstraint:lcCenterXAlertView];
     [self addConstraint:_lcCenterYAlertView];
-    
     _titleLabel = [UILabel new];
     [self.alertView addSubview:_titleLabel];
+    _titleLabel.textAlignment = NSTextAlignmentCenter;
     _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _titleLabel.font = [UIFont systemFontOfSize:16];
     _titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
@@ -348,7 +348,8 @@
     CGRect viewTransform =[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardEndY = viewTransform.origin.y;
     self.lcCenterYAlertView.constant = - (self.frame.size.height - keyboardEndY) * 0.5;
-    [UIView animateWithDuration:0.25 animations:^{
+    CGFloat keyboardAnimation = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    [UIView animateWithDuration:keyboardAnimation animations:^{
         [self layoutIfNeeded];
     }];
 }
