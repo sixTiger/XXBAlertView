@@ -79,6 +79,8 @@
 {
     [self p_addKeyboardNote];
     [[UIApplication sharedApplication].keyWindow addSubview:self];
+    self.frame = [UIApplication sharedApplication].keyWindow.bounds;
+    self.autoresizingMask = (1 << 6) -1;
     [UIView animateWithDuration:0.25 animations:^{
         self.backgroundColor = self.backgroundShowColor;
     } completion:^(BOOL finished) {
