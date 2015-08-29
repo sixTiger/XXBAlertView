@@ -13,17 +13,18 @@
 #define alertViewWidth 265
 
 @interface XXBAlertView ()
-@property(nonatomic , strong)UIView *alertView;
-@property(nonatomic , strong)UILabel *titleLabel;
-@property(nonatomic , strong)UIView *lineView;
-@property(nonatomic , strong)UIView *inputView;
-@property(nonatomic , strong)UIView *buttonView;
-@property(nonatomic , strong)NSLayoutConstraint *lcTopInputView;
-@property(nonatomic , strong)NSLayoutConstraint *lcHeightInputView;
-@property(nonatomic , strong)NSLayoutConstraint *lcCenterYAlertView;
-@property(nonatomic , strong)NSArray *textFiledArray;
-@property(nonatomic , strong)NSMutableArray *buttonTitleArray;
-@property(nonatomic , strong)NSMutableArray *buttonArray;
+@property(nonatomic , strong)UIWindow               *alertWindow;
+@property(nonatomic , strong)UIView                 *alertView;
+@property(nonatomic , strong)UILabel                *titleLabel;
+@property(nonatomic , strong)UIView                 *lineView;
+@property(nonatomic , strong)UIView                 *inputView;
+@property(nonatomic , strong)UIView                 *buttonView;
+@property(nonatomic , strong)NSLayoutConstraint     *lcTopInputView;
+@property(nonatomic , strong)NSLayoutConstraint     *lcHeightInputView;
+@property(nonatomic , strong)NSLayoutConstraint     *lcCenterYAlertView;
+@property(nonatomic , strong)NSArray                *textFiledArray;
+@property(nonatomic , strong)NSMutableArray         *buttonTitleArray;
+@property(nonatomic , strong)NSMutableArray         *buttonArray;
 @end
 
 @implementation XXBAlertView
@@ -78,8 +79,9 @@
 - (void)show
 {
     [self p_addKeyboardNote];
-    [[UIApplication sharedApplication].keyWindow addSubview:self];
-    self.frame = [UIApplication sharedApplication].keyWindow.bounds;
+    
+    self.frame = self.alertWindow.rootViewController.view.bounds;
+    [self.alertWindow.rootViewController.view addSubview:self];
     self.autoresizingMask = (1 << 6) -1;
     [UIView animateWithDuration:0.25 animations:^{
         self.backgroundColor = self.backgroundShowColor;
@@ -189,8 +191,17 @@
     [self endEditing:YES];
 }
 #pragma mark - 私有方法
+- (void)p_creatWindow
+{
+    _alertWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    _alertWindow.rootViewController = [[UIViewController alloc] init];
+    _alertWindow.backgroundColor = [UIColor clearColor];
+    [_alertWindow makeKeyAndVisible];
+}
 - (void)p_setupAlertView
 {
+    [[UIApplication sharedApplication].keyWindow endEditing:YES];
+    [self p_creatWindow];
     self.frame = [UIScreen mainScreen].bounds;
     self.autoresizingMask = (1 << 6) -1;
     self.backgroundColor = [UIColor clearColor];
@@ -347,13 +358,33 @@
 }
 - (void)p_keyBoardWillChangeFrame:(NSNotification *)note
 {
+    NSLog(@"%@",note);
+    CGSize size = [self p_countScreenSize];
     CGRect viewTransform =[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardEndY = viewTransform.origin.y;
-    self.lcCenterYAlertView.constant = - (self.frame.size.height - keyboardEndY) * 0.5;
+    self.lcCenterYAlertView.constant = - (size.height - keyboardEndY) * 0.5;
     CGFloat keyboardAnimation = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
     [UIView animateWithDuration:keyboardAnimation animations:^{
         [self layoutIfNeeded];
     }];
+}
+- (CGSize)p_countScreenSize
+{
+    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    
+    // 对iOS7最调整
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
+        UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+            CGFloat tmp = screenWidth;
+            screenWidth = screenHeight;
+            screenHeight = tmp;
+        }
+    }
+    
+    return CGSizeMake(screenWidth, screenHeight);
 }
 - (void)p_buttonClick:(UIButton *)clickedButton
 {

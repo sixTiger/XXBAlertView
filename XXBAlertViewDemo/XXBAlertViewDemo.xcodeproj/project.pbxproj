@@ -12,7 +12,6 @@
 		6288AD451B86B8C700E8E2F9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6288AD441B86B8C700E8E2F9 /* ViewController.m */; };
 		6288AD481B86B8C700E8E2F9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6288AD461B86B8C700E8E2F9 /* Main.storyboard */; };
 		6288AD4A1B86B8C700E8E2F9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6288AD491B86B8C700E8E2F9 /* Images.xcassets */; };
-		6288AD4D1B86B8C700E8E2F9 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6288AD4B1B86B8C700E8E2F9 /* LaunchScreen.xib */; };
 		6288AD591B86B8C700E8E2F9 /* XXBAlertViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6288AD581B86B8C700E8E2F9 /* XXBAlertViewDemoTests.m */; };
 		6288AD651B86B90D00E8E2F9 /* XXBAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6288AD641B86B90D00E8E2F9 /* XXBAlertView.m */; };
 /* End PBXBuildFile section */
@@ -37,7 +36,6 @@
 		6288AD441B86B8C700E8E2F9 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		6288AD471B86B8C700E8E2F9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6288AD491B86B8C700E8E2F9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		6288AD4C1B86B8C700E8E2F9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		6288AD521B86B8C700E8E2F9 /* XXBAlertViewDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XXBAlertViewDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6288AD571B86B8C700E8E2F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6288AD581B86B8C700E8E2F9 /* XXBAlertViewDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XXBAlertViewDemoTests.m; sourceTree = "<group>"; };
@@ -91,7 +89,6 @@
 				6288AD441B86B8C700E8E2F9 /* ViewController.m */,
 				6288AD461B86B8C700E8E2F9 /* Main.storyboard */,
 				6288AD491B86B8C700E8E2F9 /* Images.xcassets */,
-				6288AD4B1B86B8C700E8E2F9 /* LaunchScreen.xib */,
 				6288AD3C1B86B8C700E8E2F9 /* Supporting Files */,
 			);
 			path = XXBAlertViewDemo;
@@ -182,6 +179,7 @@
 				TargetAttributes = {
 					6288AD381B86B8C700E8E2F9 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = USZUZCA5NW;
 					};
 					6288AD511B86B8C700E8E2F9 = {
 						CreatedOnToolsVersion = 6.4;
@@ -214,7 +212,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6288AD481B86B8C700E8E2F9 /* Main.storyboard in Resources */,
-				6288AD4D1B86B8C700E8E2F9 /* LaunchScreen.xib in Resources */,
 				6288AD4A1B86B8C700E8E2F9 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,14 +262,6 @@
 				6288AD471B86B8C700E8E2F9 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		6288AD4B1B86B8C700E8E2F9 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6288AD4C1B86B8C700E8E2F9 /* Base */,
-			);
-			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -362,7 +351,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = XXBAlertViewDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -375,7 +366,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = XXBAlertViewDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
