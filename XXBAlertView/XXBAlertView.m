@@ -139,6 +139,7 @@
 }
 - (void)dealloc
 {
+    NSLog(@"+++");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 - (UIColor *)backgroundShowColor
