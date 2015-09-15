@@ -56,6 +56,18 @@
         [self.buttonTitleArray removeAllObjects];
         self.delegate = delegate;
         self.titleLabel.text = title;
+        
+        CGSize oneLineSize = [self.titleLabel systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+        
+        if (oneLineSize.width >= alertViewWidth - 40)
+        {
+            self.titleLabel.textAlignment = NSTextAlignmentLeft ;
+        }
+        else
+        {
+            self.titleLabel.textAlignment = NSTextAlignmentCenter;
+        }
+        
         if (cancelButtonTitle)
         {
             [self.buttonTitleArray addObject:cancelButtonTitle];
