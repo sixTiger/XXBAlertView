@@ -25,6 +25,7 @@ typedef NS_ENUM(NSInteger, XXBAlertViewStyle) {
 @property(nonatomic , strong)UIColor *backgroundShowColor;
 @property(nonatomic , strong)UIColor *buttonTitleColor;
 @property(nonatomic , strong)UIColor *buttonTitleColorHighlighted;
+@property(nonatomic , strong)UIColor *buttonTitleColorDisable;
 - (instancetype)initWithTitle:(NSString *)title  delegate:(id <XXBAlertViewDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION NS_EXTENSION_UNAVAILABLE_IOS("Use UIAlertController instead.");
 - (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex NS_AVAILABLE_IOS(5_0);
 - (void)show;

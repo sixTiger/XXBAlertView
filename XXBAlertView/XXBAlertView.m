@@ -9,22 +9,24 @@
 #import "XXBAlertView.h"
 
 #define XXBColor(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0  blue:(b)/255.0  alpha:1]
-#define XXBLineColor [UIColor colorWithRed:(226)/255.0 green:(226)/255.0  blue:(226)/255.0  alpha:1]
+#define XXBInputBGColor [UIColor colorWithRed:(226)/255.0 green:(226)/255.0  blue:(226)/255.0  alpha:1]
 #define alertViewWidth 265
 
-@interface XXBAlertView ()
-@property(nonatomic , strong)UIWindow               *alertWindow;
-@property(nonatomic , strong)UIView                 *alertView;
-@property(nonatomic , strong)UILabel                *titleLabel;
-@property(nonatomic , strong)UIView                 *lineView;
-@property(nonatomic , strong)UIView                 *inputView;
-@property(nonatomic , strong)UIView                 *buttonView;
-@property(nonatomic , strong)NSLayoutConstraint     *lcTopInputView;
-@property(nonatomic , strong)NSLayoutConstraint     *lcHeightInputView;
-@property(nonatomic , strong)NSLayoutConstraint     *lcCenterYAlertView;
-@property(nonatomic , strong)NSArray                *textFiledArray;
-@property(nonatomic , strong)NSMutableArray         *buttonTitleArray;
-@property(nonatomic , strong)NSMutableArray         *buttonArray;
+#define lineWidth 1
+
+@interface XXBAlertView ()<UITextFieldDelegate>
+@property(nonatomic , strong)UIView *alertView;
+@property(nonatomic , strong)UILabel *titleLabel;
+@property(nonatomic , strong)UIView *lineView;
+@property(nonatomic , strong)UIView *inputView;
+@property(nonatomic , strong)UIView *buttonView;
+@property(nonatomic , strong)NSLayoutConstraint *lcTopInputView;
+@property(nonatomic , strong)NSLayoutConstraint *lcHeightInputView;
+@property(nonatomic , strong)NSLayoutConstraint *lcCenterYAlertView;
+@property(nonatomic , strong)NSArray *textFiledArray;
+@property(nonatomic , strong)NSMutableArray *buttonTitleArray;
+@property(nonatomic , strong)NSMutableArray *buttonArray;
+@property(nonatomic , strong)UIColor *lineColor;
 @end
 
 @implementation XXBAlertView
@@ -55,9 +57,9 @@
     {
         [self.buttonTitleArray removeAllObjects];
         self.delegate = delegate;
+        CGSize oneLineSize = CGSizeZero;
         self.titleLabel.text = title;
-        
-        CGSize oneLineSize = [self.titleLabel systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+        oneLineSize = [self.titleLabel systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
         
         if (oneLineSize.width >= alertViewWidth - 40)
         {
@@ -67,6 +69,7 @@
         {
             self.titleLabel.textAlignment = NSTextAlignmentCenter;
         }
+        
         
         if (cancelButtonTitle)
         {
@@ -91,9 +94,9 @@
 - (void)show
 {
     [self p_addKeyboardNote];
-    
-    self.frame = self.alertWindow.rootViewController.view.bounds;
-    [self.alertWindow.rootViewController.view addSubview:self];
+    [self p_setButtonsEnable];
+    [[UIApplication sharedApplication].keyWindow addSubview:self];
+    self.frame = [UIApplication sharedApplication].keyWindow.bounds;
     self.autoresizingMask = (1 << 6) -1;
     [UIView animateWithDuration:0.25 animations:^{
         self.backgroundColor = self.backgroundShowColor;
@@ -151,8 +154,7 @@
 }
 - (void)dealloc
 {
-    NSLog(@"+++");
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self p_removeObserverOfTextView];
 }
 - (UIColor *)backgroundShowColor
 {
@@ -177,6 +179,28 @@
         _buttonTitleColorHighlighted = XXBColor(210, 110, 71);
     }
     return _buttonTitleColorHighlighted;
+}
+- (UIColor *)buttonTitleColorDisable
+{
+    if (_buttonTitleColorDisable == nil)
+    {
+        _buttonTitleColorDisable = [UIColor grayColor];
+    }
+    return _buttonTitleColorDisable;
+}
+- (UIColor *)lineColor
+{
+    if (_lineColor == nil) {
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+        {
+            _lineColor = [UIColor colorWithRed:(186)/255.0 green:(186)/255.0  blue:(186)/255.0  alpha:1];
+        }
+        else
+        {
+            _lineColor = [UIColor colorWithRed:(226)/255.0 green:(226)/255.0  blue:(226)/255.0  alpha:1];
+        }
+    }
+    return _lineColor;
 }
 - (NSMutableArray *)buttonTitleArray
 {
@@ -204,17 +228,8 @@
     [self endEditing:YES];
 }
 #pragma mark - 私有方法
-- (void)p_creatWindow
-{
-    _alertWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    _alertWindow.rootViewController = [[UIViewController alloc] init];
-    _alertWindow.backgroundColor = [UIColor clearColor];
-    [_alertWindow makeKeyAndVisible];
-}
 - (void)p_setupAlertView
 {
-    [[UIApplication sharedApplication].keyWindow endEditing:YES];
-    [self p_creatWindow];
     self.frame = [UIScreen mainScreen].bounds;
     self.autoresizingMask = (1 << 6) -1;
     self.backgroundColor = [UIColor clearColor];
@@ -226,14 +241,16 @@
     [self p_craetInputView];
     [self p_creatButtons];
     [self setAlertViewStyle:XXBAlertViewStyleDefault];
+    [self p_addObserverOfTextView];
 }
 - (void)p_craetInputView
 {
     _inputView.clipsToBounds = YES;
     UITextField *textField1 = [UITextField new];
+    textField1.delegate = self;
     textField1.layer.cornerRadius = 3;
     textField1.clipsToBounds = YES;
-    textField1.backgroundColor = XXBLineColor;
+    textField1.backgroundColor = XXBInputBGColor;
     textField1.font = [UIFont systemFontOfSize:16];
     textField1.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 12)];
     textField1.leftViewMode = UITextFieldViewModeAlways;
@@ -249,7 +266,8 @@
     
     
     UITextField *textField2 = [UITextField new];
-    textField2.backgroundColor =XXBLineColor;
+    textField2.delegate = self;
+    textField2.backgroundColor =XXBInputBGColor;
     textField2.layer.cornerRadius = 3;
     textField2.clipsToBounds = YES;
     textField2.font = [UIFont systemFontOfSize:16];
@@ -317,13 +335,13 @@
     
     _lineView = [UIView new];
     [_alertView addSubview:_lineView];
-    _lineView.backgroundColor = XXBLineColor;
+    _lineView.backgroundColor = self.lineColor;
     _lineView.translatesAutoresizingMaskIntoConstraints = NO;
     NSLayoutConstraint *lcRightLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
     
     NSLayoutConstraint *lcLeftLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
     NSLayoutConstraint *lcTopLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _inputView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:22];
-    NSLayoutConstraint *lcHeightLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1.0];
+    NSLayoutConstraint *lcHeightLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:lineWidth];
     [self.alertView addConstraints:@[lcRightLineView, lcLeftLineView,lcTopLineView]];
     [_lineView addConstraint:lcHeightLineView];
     
@@ -343,7 +361,7 @@
     [self.buttonArray removeAllObjects];
     [self.buttonView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     NSInteger buttonCount = self.buttonTitleArray.count;
-    CGFloat buttonWidth = (alertViewWidth - buttonCount + 1.0)/(CGFloat)buttonCount;
+    CGFloat buttonWidth = (alertViewWidth - buttonCount + lineWidth)/(CGFloat)buttonCount;
     CGFloat buttonX;
     CGFloat buttonY = 0.0;
     CGFloat buttonHeight = 44.0;
@@ -355,11 +373,12 @@
         
         [button setTitleColor:self.buttonTitleColor forState:UIControlStateNormal];
         [button setTitleColor:self.buttonTitleColorHighlighted forState:UIControlStateHighlighted];
+        [button setTitleColor:self.buttonTitleColorDisable forState:UIControlStateDisabled];
         [self.buttonView addSubview:button];
         [self.buttonArray addObject:button];
         button.frame = CGRectMake(buttonX, buttonY, buttonWidth, buttonHeight);
-        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(buttonX + buttonWidth, 0, 1, buttonHeight)];
-        lineView.backgroundColor = XXBLineColor;
+        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(buttonX + buttonWidth, 0, lineWidth, buttonHeight)];
+        lineView.backgroundColor = self.lineColor;
         [self.buttonView addSubview:lineView];
         [button addTarget:self action:@selector(p_buttonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -371,33 +390,13 @@
 }
 - (void)p_keyBoardWillChangeFrame:(NSNotification *)note
 {
-    NSLog(@"%@",note);
-    CGSize size = [self p_countScreenSize];
     CGRect viewTransform =[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardEndY = viewTransform.origin.y;
-    self.lcCenterYAlertView.constant = - (size.height - keyboardEndY) * 0.5;
+    self.lcCenterYAlertView.constant = - (self.frame.size.height - keyboardEndY) * 0.5;
     CGFloat keyboardAnimation = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    
     [UIView animateWithDuration:keyboardAnimation animations:^{
         [self layoutIfNeeded];
     }];
-}
-- (CGSize)p_countScreenSize
-{
-    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
-    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
-    
-    // 对iOS7最调整
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
-        UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-            CGFloat tmp = screenWidth;
-            screenWidth = screenHeight;
-            screenHeight = tmp;
-        }
-    }
-    
-    return CGSizeMake(screenWidth, screenHeight);
 }
 - (void)p_buttonClick:(UIButton *)clickedButton
 {
@@ -410,5 +409,72 @@
         }
         [self removeFromSuperview];
     }];
+}
+- (void)p_addObserverOfTextView
+{
+    for (UITextField *textField in self.textFiledArray)
+    {
+        
+        [textField addObserver:self forKeyPath:@"text" options:0 context:nil];
+        [textField addTarget:self  action:@selector(textFileTextChage)  forControlEvents:UIControlEventAllEditingEvents];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFileTextChage) name:UITextFieldTextDidChangeNotification object:textField];
+    }
+}
+- (void)p_removeObserverOfTextView
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    for (UITextField *textField in self.textFiledArray)
+    {
+        [textField removeObserver:self forKeyPath:@"text"];
+    }
+}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    [self p_setButtonsEnable];
+    return YES;
+}
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    [self p_setButtonsEnable];
+}
+- (void)textFileTextChage
+{
+    [self p_setButtonsEnable];
+}
+- (void)p_setButtonsEnable
+{
+    NSInteger count = self.buttonArray.count;
+    for (int i = 1; i < count; i++)
+    {
+        UIButton *button = self.buttonArray[i];
+        switch (self.alertViewStyle) {
+            case XXBAlertViewStyleDefault:
+            {
+                break;
+            }
+            case XXBAlertViewStyleSecureTextInput:
+            {
+                UITextField *textField1 = self.textFiledArray[0];
+                button.enabled = textField1.text.length >0;
+                break;
+            }
+            case XXBAlertViewStylePlainTextInput:
+            {
+                UITextField *textField1 = self.textFiledArray[0];
+                button.enabled = textField1.text.length >0;
+                break;
+            }
+            case XXBAlertViewStyleLoginAndPasswordInput:
+            {
+                UITextField *textField1 = self.textFiledArray[0];
+                UITextField *textField2 = self.textFiledArray[1];
+                button.enabled = (textField1.text.length >0)&&(textField2.text.length >0);
+                break;
+            }
+                
+            default:
+                break;
+        }
+    }
 }
 @end
