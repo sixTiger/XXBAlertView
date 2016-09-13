@@ -10,22 +10,29 @@
 
 #define XXBColor(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0  blue:(b)/255.0  alpha:1]
 #define XXBInputBGColor [UIColor colorWithRed:(226)/255.0 green:(226)/255.0  blue:(226)/255.0  alpha:1]
-#define alertViewWidth 265
-
-#define lineWidth 0.5
+#define XXBAlertViewTitleTextSize                   20
+#define XXBAlertViewMessageTextSize                 14
+#define XXBAlertViewWidth                           265
+#define XXBAlertViewLineWidth                       0.5
+#define XXBAlertViewMargin                          20
+#define XXBAlertViewInputViewMarginTop              22
+#define XXBAlertViewDefaultOneLintHeight            44
+#define XXBAlertViewInputMargin                     12
+#define XXBAlertViewInputTextSize                   16
 
 @interface XXBAlertView ()<UITextFieldDelegate>
-@property(nonatomic , strong)UIView *alertView;
-@property(nonatomic , strong)UILabel *titleLabel;
-@property(nonatomic , strong)UIView *lineView;
-@property(nonatomic , strong)UIView *inputView;
-@property(nonatomic , strong)UIView *buttonView;
-@property(nonatomic , strong)NSLayoutConstraint *lcTopInputView;
-@property(nonatomic , strong)NSLayoutConstraint *lcHeightInputView;
-@property(nonatomic , strong)NSLayoutConstraint *lcCenterYAlertView;
-@property(nonatomic , strong)NSArray *textFiledArray;
-@property(nonatomic , strong)NSMutableArray *buttonTitleArray;
-@property(nonatomic , strong)NSMutableArray *buttonArray;
+@property(nonatomic , strong)UIView                 *alertView;
+@property(nonatomic , strong)UILabel                *titleLabel;
+@property(nonatomic , strong)UILabel                *messageLabel;
+@property(nonatomic , strong)UIView                 *lineView;
+@property(nonatomic , strong)UIView                 *inputView;
+@property(nonatomic , strong)UIView                 *buttonView;
+@property(nonatomic , strong)NSLayoutConstraint     *lcTopInputView;
+@property(nonatomic , strong)NSLayoutConstraint     *lcHeightInputView;
+@property(nonatomic , strong)NSLayoutConstraint     *lcCenterYAlertView;
+@property(nonatomic , strong)NSArray                *textFiledArray;
+@property(nonatomic , strong)NSMutableArray         *buttonTitleArray;
+@property(nonatomic , strong)NSMutableArray         *buttonArray;
 @property(nonatomic , strong)UIColor *lineColor;
 @end
 
@@ -49,15 +56,16 @@
     return self.textFiledArray[textFieldIndex];
 }
 
-- (instancetype)initWithTitle:(NSString *)title delegate:(id<XXBAlertViewDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... {
+- (instancetype)initWithTitle:(NSString *)title  andMessage:(NSString *)message delegate:(id <XXBAlertViewDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... {
     if (self = [super init]) {
         [self.buttonTitleArray removeAllObjects];
         self.delegate = delegate;
         CGSize oneLineSize = CGSizeZero;
         self.titleLabel.text = title;
+        self.messageLabel.text = message;
         oneLineSize = [self.titleLabel systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
         
-        if (oneLineSize.width >= alertViewWidth - 40) {
+        if (oneLineSize.width >= XXBAlertViewWidth - 40) {
             self.titleLabel.textAlignment = NSTextAlignmentLeft ;
         } else {
             self.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -121,23 +129,23 @@
             break;
         }
         case XXBAlertViewStyleSecureTextInput: {
-            self.lcTopInputView.constant = 22;
-            self.lcHeightInputView.constant = 44;
+            self.lcTopInputView.constant = XXBAlertViewInputViewMarginTop;
+            self.lcHeightInputView.constant = XXBAlertViewDefaultOneLintHeight;
             UITextField *textFiled = self.textFiledArray[0];
             textFiled.secureTextEntry = YES;
             textFiled.placeholder = @"请输入密码";
             break;
         }
         case XXBAlertViewStylePlainTextInput: {
-            self.lcTopInputView.constant = 22;
-            self.lcHeightInputView.constant = 44;
+            self.lcTopInputView.constant = XXBAlertViewInputViewMarginTop;
+            self.lcHeightInputView.constant = XXBAlertViewDefaultOneLintHeight;
             UITextField *textFiled = self.textFiledArray[0];
             textFiled.secureTextEntry = NO;
             textFiled.placeholder = @"请输入用户名";
             break;
         }
         case XXBAlertViewStyleLoginAndPasswordInput: {
-            self.lcTopInputView.constant = 22;
+            self.lcTopInputView.constant = XXBAlertViewInputViewMarginTop;
             self.lcHeightInputView.constant = 100;
             UITextField *textFiled = self.textFiledArray[0];
             textFiled.secureTextEntry = NO;
@@ -226,7 +234,7 @@
     self.frame = [UIScreen mainScreen].bounds;
     self.autoresizingMask = (1 << 6) -1;
     self.backgroundColor = [UIColor clearColor];
-    _alertView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, alertViewWidth, alertViewWidth)];
+    _alertView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, XXBAlertViewWidth, XXBAlertViewWidth)];
     _alertView.layer.cornerRadius = 5;
     _alertView.clipsToBounds = YES;
     [self addSubview:_alertView];
@@ -244,8 +252,8 @@
     textField1.layer.cornerRadius = 3;
     textField1.clipsToBounds = YES;
     textField1.backgroundColor = XXBInputBGColor;
-    textField1.font = [UIFont systemFontOfSize:16];
-    textField1.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 12)];
+    textField1.font = [UIFont systemFontOfSize:XXBAlertViewInputTextSize];
+    textField1.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, XXBAlertViewInputMargin, XXBAlertViewInputMargin)];
     textField1.leftViewMode = UITextFieldViewModeAlways;
     textField1.placeholder = @"亲输入用户名";
     [_inputView addSubview:textField1];
@@ -253,7 +261,7 @@
     NSLayoutConstraint *lcRightTextField1 = [NSLayoutConstraint constraintWithItem:textField1 attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_inputView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
     NSLayoutConstraint *lcLeftTextField1 = [NSLayoutConstraint constraintWithItem:textField1 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_inputView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
     NSLayoutConstraint *lcTopTextField1 = [NSLayoutConstraint constraintWithItem:textField1 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _inputView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
-    NSLayoutConstraint *lcHeightTextField1 = [NSLayoutConstraint constraintWithItem:textField1 attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:44];
+    NSLayoutConstraint *lcHeightTextField1 = [NSLayoutConstraint constraintWithItem:textField1 attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:XXBAlertViewDefaultOneLintHeight];
     [self.alertView addConstraints:@[lcRightTextField1, lcLeftTextField1,lcTopTextField1]];
     [textField1 addConstraint:lcHeightTextField1];
     
@@ -263,16 +271,16 @@
     textField2.backgroundColor =XXBInputBGColor;
     textField2.layer.cornerRadius = 3;
     textField2.clipsToBounds = YES;
-    textField2.font = [UIFont systemFontOfSize:16];
-    textField2.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 12)];
+    textField2.font = [UIFont systemFontOfSize:XXBAlertViewInputTextSize];
+    textField2.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, XXBAlertViewInputMargin, XXBAlertViewInputMargin)];
     textField2.leftViewMode = UITextFieldViewModeAlways;
     textField2.placeholder = @"请输入密码";
     [_inputView addSubview:textField2];
     textField2.translatesAutoresizingMaskIntoConstraints = NO;
     NSLayoutConstraint *lcRightTextField2 = [NSLayoutConstraint constraintWithItem:textField2 attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_inputView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
     NSLayoutConstraint *lcLeftTextField2 = [NSLayoutConstraint constraintWithItem:textField2 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_inputView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
-    NSLayoutConstraint *lcTopTextField2 = [NSLayoutConstraint constraintWithItem:textField2 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: textField1 attribute:NSLayoutAttributeBottom multiplier:1.0 constant:12];
-    NSLayoutConstraint *lcHeightTextField2 = [NSLayoutConstraint constraintWithItem:textField2 attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:44];
+    NSLayoutConstraint *lcTopTextField2 = [NSLayoutConstraint constraintWithItem:textField2 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: textField1 attribute:NSLayoutAttributeBottom multiplier:1.0 constant:XXBAlertViewInputMargin];
+    NSLayoutConstraint *lcHeightTextField2 = [NSLayoutConstraint constraintWithItem:textField2 attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:XXBAlertViewDefaultOneLintHeight];
     [self.alertView addConstraints:@[lcRightTextField2, lcLeftTextField2,lcTopTextField2]];
     [textField2 addConstraint:lcHeightTextField2];
     self.textFiledArray = @[textField1,textField2];
@@ -292,33 +300,48 @@
     }
     
     _alertView.translatesAutoresizingMaskIntoConstraints = NO;
-    NSLayoutConstraint *lcWidthAlertView = [NSLayoutConstraint constraintWithItem:_alertView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:alertViewWidth];
+    NSLayoutConstraint *lcWidthAlertView = [NSLayoutConstraint constraintWithItem:_alertView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:XXBAlertViewWidth];
     NSLayoutConstraint *lcCenterXAlertView = [NSLayoutConstraint constraintWithItem:_alertView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem: self attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
     _lcCenterYAlertView = [NSLayoutConstraint constraintWithItem:_alertView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem: self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
     [_alertView addConstraint:lcWidthAlertView];
     [self addConstraint:lcCenterXAlertView];
     [self addConstraint:_lcCenterYAlertView];
+    
     _titleLabel = [UILabel new];
     [self.alertView addSubview:_titleLabel];
     _titleLabel.textAlignment = NSTextAlignmentCenter;
     _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _titleLabel.font = [UIFont systemFontOfSize:16];
+    _titleLabel.font = [UIFont systemFontOfSize:XXBAlertViewTitleTextSize];
     _titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
     _titleLabel.numberOfLines = 0;
     _titleLabel.text = @"是否确认删除该博文，您和其他人都不可见？";
     
-    NSLayoutConstraint *lcRightTitleLabel = [NSLayoutConstraint constraintWithItem:_titleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-20];
-    NSLayoutConstraint *lcLeftTitleLabel = [NSLayoutConstraint constraintWithItem:_titleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:20];
-    NSLayoutConstraint *lcTopTitleLabel = [NSLayoutConstraint constraintWithItem:_titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _alertView attribute:NSLayoutAttributeTop multiplier:1.0 constant:36];
+    NSLayoutConstraint *lcRightTitleLabel = [NSLayoutConstraint constraintWithItem:_titleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-XXBAlertViewMargin];
+    NSLayoutConstraint *lcLeftTitleLabel = [NSLayoutConstraint constraintWithItem:_titleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:XXBAlertViewMargin];
+    NSLayoutConstraint *lcTopTitleLabel = [NSLayoutConstraint constraintWithItem:_titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _alertView attribute:NSLayoutAttributeTop multiplier:1.0 constant:XXBAlertViewMargin];
     [self.alertView addConstraints:@[lcRightTitleLabel, lcLeftTitleLabel,lcTopTitleLabel]];
+    
+    _messageLabel = [UILabel new];
+    [self.alertView addSubview:_messageLabel];
+    _messageLabel.numberOfLines = 0;
+    _messageLabel.font = [UIFont systemFontOfSize:XXBAlertViewMessageTextSize];
+    _messageLabel.textAlignment = NSTextAlignmentCenter;
+    _messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    NSLayoutConstraint *lcRightMessageLabel = [NSLayoutConstraint constraintWithItem:_messageLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-XXBAlertViewMargin];
+    NSLayoutConstraint *lcLeftMessageLabel = [NSLayoutConstraint constraintWithItem:_messageLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:XXBAlertViewMargin];
+    NSLayoutConstraint *lcTopMessageLabel = [NSLayoutConstraint constraintWithItem:_messageLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _titleLabel attribute:NSLayoutAttributeBottom multiplier:1.0 constant:XXBAlertViewMargin];
+    lcTopMessageLabel.priority = UILayoutPriorityDefaultLow;
+    
+    [self.alertView addConstraints:@[lcRightMessageLabel, lcLeftMessageLabel,lcTopMessageLabel]];
+    
     
     _inputView = [UIView new];
     _inputView.translatesAutoresizingMaskIntoConstraints = NO;
     [_alertView addSubview:_inputView];
     
-    NSLayoutConstraint *lcRightInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-12];
-    NSLayoutConstraint *lcLeftInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:12];
-    _lcTopInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _titleLabel attribute:NSLayoutAttributeBottom multiplier:1.0 constant:22];
+    NSLayoutConstraint *lcRightInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-XXBAlertViewInputMargin];
+    NSLayoutConstraint *lcLeftInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:XXBAlertViewInputMargin];
+    _lcTopInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _messageLabel attribute:NSLayoutAttributeBottom multiplier:1.0 constant:XXBAlertViewInputViewMarginTop];
     _lcHeightInputView = [NSLayoutConstraint constraintWithItem:_inputView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:0];
     [self.alertView addConstraints:@[lcRightInputView, lcLeftInputView,_lcTopInputView]];
     [_inputView addConstraint:_lcHeightInputView];
@@ -331,8 +354,8 @@
     NSLayoutConstraint *lcRightLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
     
     NSLayoutConstraint *lcLeftLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
-    NSLayoutConstraint *lcTopLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _inputView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:22];
-    NSLayoutConstraint *lcHeightLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:lineWidth];
+    NSLayoutConstraint *lcTopLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _inputView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:XXBAlertViewMargin];
+    NSLayoutConstraint *lcHeightLineView = [NSLayoutConstraint constraintWithItem:_lineView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:XXBAlertViewLineWidth];
     [self.alertView addConstraints:@[lcRightLineView, lcLeftLineView,lcTopLineView]];
     [_lineView addConstraint:lcHeightLineView];
     
@@ -343,7 +366,8 @@
     NSLayoutConstraint *lcLeftButtonView = [NSLayoutConstraint constraintWithItem:_buttonView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_alertView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
     NSLayoutConstraint *lcTopBUttonView = [NSLayoutConstraint constraintWithItem:_buttonView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem: _lineView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
     NSLayoutConstraint *lcBotBUttonView = [NSLayoutConstraint constraintWithItem:_buttonView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem: _alertView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    NSLayoutConstraint *lcHeightButtonview = [NSLayoutConstraint constraintWithItem:_buttonView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:44];
+    lcBotBUttonView.priority = UILayoutPriorityDefaultLow;
+    NSLayoutConstraint *lcHeightButtonview = [NSLayoutConstraint constraintWithItem:_buttonView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0 constant:XXBAlertViewDefaultOneLintHeight];
     [self.alertView addConstraints:@[lcRightButtonView, lcLeftButtonView,lcTopBUttonView,lcBotBUttonView]];
     [_buttonView addConstraint:lcHeightButtonview];
 }
@@ -352,12 +376,11 @@
     [self.buttonArray removeAllObjects];
     [self.buttonView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     NSInteger buttonCount = self.buttonTitleArray.count;
-    CGFloat buttonWidth = (alertViewWidth - buttonCount + lineWidth)/(CGFloat)buttonCount;
+    CGFloat buttonWidth = (XXBAlertViewWidth - (buttonCount -1 ) * XXBAlertViewLineWidth)/(CGFloat)buttonCount;
     CGFloat buttonX;
     CGFloat buttonY = 0.0;
-    CGFloat buttonHeight = 44.0;
     for (NSInteger i = 0; i < buttonCount; i++) {
-        buttonX = i * buttonWidth + i;
+        buttonX = i * ( buttonWidth + XXBAlertViewLineWidth );
         UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:self.buttonTitleArray[i] forState:UIControlStateNormal];
         
@@ -366,8 +389,8 @@
         [button setTitleColor:self.buttonTitleColorDisable forState:UIControlStateDisabled];
         [self.buttonView addSubview:button];
         [self.buttonArray addObject:button];
-        button.frame = CGRectMake(buttonX, buttonY, buttonWidth, buttonHeight);
-        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(buttonX + buttonWidth, 0, lineWidth, buttonHeight)];
+        button.frame = CGRectMake(buttonX, buttonY, buttonWidth, XXBAlertViewDefaultOneLintHeight);
+        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(buttonX + buttonWidth, 0, XXBAlertViewLineWidth, XXBAlertViewDefaultOneLintHeight)];
         lineView.backgroundColor = self.lineColor;
         [self.buttonView addSubview:lineView];
         [button addTarget:self action:@selector(p_buttonClick:) forControlEvents:UIControlEventTouchUpInside];
