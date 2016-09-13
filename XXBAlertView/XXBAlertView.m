@@ -12,7 +12,7 @@
 #define XXBInputBGColor [UIColor colorWithRed:(226)/255.0 green:(226)/255.0  blue:(226)/255.0  alpha:1]
 #define alertViewWidth 265
 
-#define lineWidth 1
+#define lineWidth 0.5
 
 @interface XXBAlertView ()<UITextFieldDelegate>
 @property(nonatomic , strong)UIView *alertView;
