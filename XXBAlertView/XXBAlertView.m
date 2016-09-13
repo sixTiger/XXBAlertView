@@ -31,58 +31,46 @@
 
 @implementation XXBAlertView
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    if (self = [super initWithFrame:frame])
-    {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
         [self p_setupAlertView];
     }
     return self;
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    if (self = [super initWithCoder:aDecoder])
-    {
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
         [self p_setupAlertView];
     }
     return self;
 }
-- (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex
-{
+
+- (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex {
     return self.textFiledArray[textFieldIndex];
 }
-- (instancetype)initWithTitle:(NSString *)title delegate:(id<XXBAlertViewDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ...
-{
-    if (self = [super init])
-    {
+
+- (instancetype)initWithTitle:(NSString *)title delegate:(id<XXBAlertViewDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... {
+    if (self = [super init]) {
         [self.buttonTitleArray removeAllObjects];
         self.delegate = delegate;
         CGSize oneLineSize = CGSizeZero;
         self.titleLabel.text = title;
         oneLineSize = [self.titleLabel systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
         
-        if (oneLineSize.width >= alertViewWidth - 40)
-        {
+        if (oneLineSize.width >= alertViewWidth - 40) {
             self.titleLabel.textAlignment = NSTextAlignmentLeft ;
-        }
-        else
-        {
+        } else {
             self.titleLabel.textAlignment = NSTextAlignmentCenter;
         }
-        
-        
-        if (cancelButtonTitle)
-        {
+        if (cancelButtonTitle) {
             [self.buttonTitleArray addObject:cancelButtonTitle];
         }
         NSString* curStr;
         va_list list;
-        if(otherButtonTitles)
-        {
+        if(otherButtonTitles) {
             [self.buttonTitleArray addObject:[otherButtonTitles copy]];
             va_start(list, otherButtonTitles);
-            while ((curStr = va_arg(list, NSString*)))
-            {
+            while ((curStr = va_arg(list, NSString*))) {
                 [self.buttonTitleArray addObject:[curStr copy]];
             }
             va_end(list);
@@ -91,8 +79,8 @@
     }
     return self;
 }
-- (void)show
-{
+
+- (void)show {
     [self p_addKeyboardNote];
     [self p_setButtonsEnable];
     [[UIApplication sharedApplication].keyWindow addSubview:self];
@@ -106,19 +94,32 @@
         }
     }];
     
+    self.alpha = 1.0;
+    CABasicAnimation *scale = [CABasicAnimation animation];
+    scale.keyPath = @"transform.scale";
+    scale.fromValue = @(1.2);
+    scale.toValue = @(1.0);
+    CABasicAnimation *opacity = [CABasicAnimation animation];
+    opacity.keyPath = @"opacity";
+    opacity.fromValue = @(0);
+    opacity.toValue = @(1);
+    CAAnimationGroup *group = [CAAnimationGroup animation];
+    group.animations = @[scale, opacity];
+    group.duration = 0.25;
+    [self.layer addAnimation:group forKey:nil];
+    
+    
 }
-- (void)setAlertViewStyle:(XXBAlertViewStyle)alertViewStyle
-{
+
+- (void)setAlertViewStyle:(XXBAlertViewStyle)alertViewStyle {
     _alertViewStyle = alertViewStyle;
     switch (alertViewStyle) {
-        case XXBAlertViewStyleDefault:
-        {
+        case XXBAlertViewStyleDefault: {
             self.lcTopInputView.constant = 4;
             self.lcHeightInputView.constant = 0;
             break;
         }
-        case XXBAlertViewStyleSecureTextInput:
-        {
+        case XXBAlertViewStyleSecureTextInput: {
             self.lcTopInputView.constant = 22;
             self.lcHeightInputView.constant = 44;
             UITextField *textFiled = self.textFiledArray[0];
@@ -126,8 +127,7 @@
             textFiled.placeholder = @"请输入密码";
             break;
         }
-        case XXBAlertViewStylePlainTextInput:
-        {
+        case XXBAlertViewStylePlainTextInput: {
             self.lcTopInputView.constant = 22;
             self.lcHeightInputView.constant = 44;
             UITextField *textFiled = self.textFiledArray[0];
@@ -135,8 +135,7 @@
             textFiled.placeholder = @"请输入用户名";
             break;
         }
-        case XXBAlertViewStyleLoginAndPasswordInput:
-        {
+        case XXBAlertViewStyleLoginAndPasswordInput: {
             self.lcTopInputView.constant = 22;
             self.lcHeightInputView.constant = 100;
             UITextField *textFiled = self.textFiledArray[0];
@@ -152,60 +151,54 @@
             break;
     }
 }
-- (void)dealloc
-{
+
+- (void)dealloc {
     [self p_removeObserverOfTextView];
 }
-- (UIColor *)backgroundShowColor
-{
-    if (_backgroundShowColor == nil)
-    {
+
+- (UIColor *)backgroundShowColor {
+    if (_backgroundShowColor == nil) {
         _backgroundShowColor = [UIColor colorWithWhite:0.0 alpha:0.36];
     }
     return _backgroundShowColor;
 }
-- (UIColor *)buttonTitleColor
-{
-    if (_buttonTitleColor == nil)
-    {
+
+- (UIColor *)buttonTitleColor {
+    if (_buttonTitleColor == nil) {
         _buttonTitleColor = XXBColor(234, 123, 79);
     }
     return _buttonTitleColor;
 }
-- (UIColor *)buttonTitleColorHighlighted
-{
+
+- (UIColor *)buttonTitleColorHighlighted {
     if (_buttonTitleColorHighlighted == nil)
     {
         _buttonTitleColorHighlighted = XXBColor(210, 110, 71);
     }
     return _buttonTitleColorHighlighted;
 }
-- (UIColor *)buttonTitleColorDisable
-{
+
+- (UIColor *)buttonTitleColorDisable {
     if (_buttonTitleColorDisable == nil)
     {
         _buttonTitleColorDisable = [UIColor grayColor];
     }
     return _buttonTitleColorDisable;
 }
-- (UIColor *)lineColor
-{
+
+- (UIColor *)lineColor {
     if (_lineColor == nil) {
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
-        {
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
             _lineColor = [UIColor colorWithRed:(186)/255.0 green:(186)/255.0  blue:(186)/255.0  alpha:1];
-        }
-        else
-        {
+        } else {
             _lineColor = [UIColor colorWithRed:(226)/255.0 green:(226)/255.0  blue:(226)/255.0  alpha:1];
         }
     }
     return _lineColor;
 }
-- (NSMutableArray *)buttonTitleArray
-{
-    if (_buttonTitleArray == nil)
-    {
+
+- (NSMutableArray *)buttonTitleArray {
+    if (_buttonTitleArray == nil) {
         _buttonTitleArray = [NSMutableArray array];
         [_buttonTitleArray addObject:@"取消"];
         [_buttonTitleArray addObject:@"确定"];
@@ -215,21 +208,20 @@
     }
     return _buttonTitleArray;
 }
-- (NSMutableArray *)buttonArray
-{
-    if (_buttonArray == nil)
-    {
+
+- (NSMutableArray *)buttonArray {
+    if (_buttonArray == nil) {
         _buttonArray = [NSMutableArray array];
     }
     return _buttonArray;
 }
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [self endEditing:YES];
 }
+
 #pragma mark - 私有方法
-- (void)p_setupAlertView
-{
+- (void)p_setupAlertView {
     self.frame = [UIScreen mainScreen].bounds;
     self.autoresizingMask = (1 << 6) -1;
     self.backgroundColor = [UIColor clearColor];
@@ -243,8 +235,8 @@
     [self setAlertViewStyle:XXBAlertViewStyleDefault];
     [self p_addObserverOfTextView];
 }
-- (void)p_craetInputView
-{
+
+- (void)p_craetInputView {
     _inputView.clipsToBounds = YES;
     UITextField *textField1 = [UITextField new];
     textField1.delegate = self;
@@ -284,19 +276,17 @@
     [textField2 addConstraint:lcHeightTextField2];
     self.textFiledArray = @[textField1,textField2];
 }
-- (void)p_creatAlertView
-{
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
-    {
+
+- (void)p_creatAlertView {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
         
         UIVisualEffectView  *visualEfView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
         visualEfView.frame = _alertView.bounds;
         visualEfView.alpha = 1.0;
         visualEfView.autoresizingMask = (1 << 6) -1;
         [_alertView addSubview:visualEfView];
-    }
-    else
-    {
+        _alertView.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+    } else {
         _alertView.backgroundColor = [UIColor whiteColor];
     }
     
@@ -356,8 +346,8 @@
     [self.alertView addConstraints:@[lcRightButtonView, lcLeftButtonView,lcTopBUttonView,lcBotBUttonView]];
     [_buttonView addConstraint:lcHeightButtonview];
 }
-- (void)p_creatButtons
-{
+
+- (void)p_creatButtons {
     [self.buttonArray removeAllObjects];
     [self.buttonView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     NSInteger buttonCount = self.buttonTitleArray.count;
@@ -365,8 +355,7 @@
     CGFloat buttonX;
     CGFloat buttonY = 0.0;
     CGFloat buttonHeight = 44.0;
-    for (NSInteger i = 0; i < buttonCount; i++)
-    {
+    for (NSInteger i = 0; i < buttonCount; i++) {
         buttonX = i * buttonWidth + i;
         UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:self.buttonTitleArray[i] forState:UIControlStateNormal];
@@ -383,13 +372,13 @@
         [button addTarget:self action:@selector(p_buttonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
 }
-- (void)p_addKeyboardNote
-{
+
+- (void)p_addKeyboardNote {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(p_keyBoardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
 }
-- (void)p_keyBoardWillChangeFrame:(NSNotification *)note
-{
+
+- (void)p_keyBoardWillChangeFrame:(NSNotification *)note {
     CGRect viewTransform =[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardEndY = viewTransform.origin.y;
     self.lcCenterYAlertView.constant = - (self.frame.size.height - keyboardEndY) * 0.5;
@@ -398,83 +387,75 @@
         [self layoutIfNeeded];
     }];
 }
-- (void)p_buttonClick:(UIButton *)clickedButton
-{
+
+- (void)p_buttonClick:(UIButton *)clickedButton {
     [UIView animateWithDuration:0.25 animations:^{
         self.alpha = 0.0;
     } completion:^(BOOL finished) {
-        if ([self.delegate respondsToSelector:@selector(alertView:clickedButtonAtIndex:)])
-        {
+        if ([self.delegate respondsToSelector:@selector(alertView:clickedButtonAtIndex:)]) {
             [self.delegate alertView:self clickedButtonAtIndex:[self.buttonArray indexOfObject:clickedButton]];
         }
         [self removeFromSuperview];
     }];
 }
-- (void)p_addObserverOfTextView
-{
-    for (UITextField *textField in self.textFiledArray)
-    {
+
+- (void)p_addObserverOfTextView {
+    for (UITextField *textField in self.textFiledArray) {
         
         [textField addObserver:self forKeyPath:@"text" options:0 context:nil];
         [textField addTarget:self  action:@selector(textFileTextChage)  forControlEvents:UIControlEventAllEditingEvents];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFileTextChage) name:UITextFieldTextDidChangeNotification object:textField];
     }
 }
-- (void)p_removeObserverOfTextView
-{
+
+- (void)p_removeObserverOfTextView {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    for (UITextField *textField in self.textFiledArray)
-    {
+    for (UITextField *textField in self.textFiledArray) {
         [textField removeObserver:self forKeyPath:@"text"];
     }
 }
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     [self p_setButtonsEnable];
     return YES;
 }
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     [self p_setButtonsEnable];
 }
-- (void)textFileTextChage
-{
+
+- (void)textFileTextChage {
     [self p_setButtonsEnable];
 }
-- (void)p_setButtonsEnable
-{
+
+- (void)p_setButtonsEnable {
     NSInteger count = self.buttonArray.count;
-    for (int i = 1; i < count; i++)
-    {
+    for (int i = 1; i < count; i++) {
         UIButton *button = self.buttonArray[i];
         switch (self.alertViewStyle) {
-            case XXBAlertViewStyleDefault:
-            {
+            case XXBAlertViewStyleDefault: {
                 break;
             }
-            case XXBAlertViewStyleSecureTextInput:
-            {
+            case XXBAlertViewStyleSecureTextInput: {
                 UITextField *textField1 = self.textFiledArray[0];
                 button.enabled = textField1.text.length >0;
                 break;
             }
-            case XXBAlertViewStylePlainTextInput:
-            {
+            case XXBAlertViewStylePlainTextInput: {
                 UITextField *textField1 = self.textFiledArray[0];
                 button.enabled = textField1.text.length >0;
                 break;
             }
-            case XXBAlertViewStyleLoginAndPasswordInput:
-            {
+            case XXBAlertViewStyleLoginAndPasswordInput: {
                 UITextField *textField1 = self.textFiledArray[0];
                 UITextField *textField2 = self.textFiledArray[1];
                 button.enabled = (textField1.text.length >0)&&(textField2.text.length >0);
                 break;
             }
-                
             default:
                 break;
         }
     }
 }
+
 @end
