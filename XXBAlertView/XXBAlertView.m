@@ -86,15 +86,16 @@
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     self.frame = [UIApplication sharedApplication].keyWindow.bounds;
     self.autoresizingMask = (1 << 6) -1;
+    self.alpha = 0.0;
+    self.backgroundColor = self.backgroundShowColor;
     [UIView animateWithDuration:0.25 animations:^{
-        self.backgroundColor = self.backgroundShowColor;
+        self.alpha = 1.0;
     } completion:^(BOOL finished) {
         if (self.alertViewStyle != XXBAlertViewStyleDefault) {
             [self.textFiledArray[0] becomeFirstResponder];
         }
     }];
     
-    self.alpha = 1.0;
     CABasicAnimation *scale = [CABasicAnimation animation];
     scale.keyPath = @"transform.scale";
     scale.fromValue = @(1.2);
@@ -285,7 +286,7 @@
         visualEfView.alpha = 1.0;
         visualEfView.autoresizingMask = (1 << 6) -1;
         [_alertView addSubview:visualEfView];
-        _alertView.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+        _alertView.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.6];
     } else {
         _alertView.backgroundColor = [UIColor whiteColor];
     }
