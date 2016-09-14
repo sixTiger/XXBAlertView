@@ -19,13 +19,13 @@ typedef NS_ENUM(NSInteger, XXBAlertViewStyle) {
 @end
 
 @interface XXBAlertView : UIView
-@property(nonatomic,copy) NSString *title;
-@property(nonatomic , weak)id<XXBAlertViewDelegate> delegate;
-@property(nonatomic , assign) XXBAlertViewStyle alertViewStyle;
-@property(nonatomic , strong)UIColor *backgroundShowColor;
-@property(nonatomic , strong)UIColor *buttonTitleColor;
-@property(nonatomic , strong)UIColor *buttonTitleColorHighlighted;
-@property(nonatomic , strong)UIColor *buttonTitleColorDisable;
+@property(nonatomic , copy) NSString                    *title;
+@property(nonatomic , weak)id<XXBAlertViewDelegate>     delegate;
+@property(nonatomic , assign) XXBAlertViewStyle         alertViewStyle;
+@property(nonatomic , strong)UIColor                    *backgroundShowColor;
+@property(nonatomic , strong)UIColor                    *buttonTitleColor;
+@property(nonatomic , strong)UIColor                    *buttonTitleColorHighlighted;
+@property(nonatomic , strong)UIColor                    *buttonTitleColorDisable;
 
 - (instancetype)initWithTitle:(NSString *)title  andMessage:(NSString *)message delegate:(id <XXBAlertViewDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION NS_EXTENSION_UNAVAILABLE_IOS("Use XXBAlertView instead.");
 

@@ -20,7 +20,9 @@
 
 - (IBAction)normalAction:(UIButton *)sender {
     XXBAlertView *alertView = [[XXBAlertView alloc] initWithTitle:@"我是标题" andMessage:@"我是内容" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定",@"取消",@"确定",@"取消", nil];
-    alertView.alertViewStyle = XXBAlertViewStyleSecureTextInput;
+//    alertView.alertViewStyle = XXBAlertViewStyleSecureTextInput;
+    alertView.buttonTitleColor = [UIColor redColor];
+    alertView.buttonTitleColorHighlighted = [UIColor blueColor];
     [alertView show];
 }
 

@@ -21,6 +21,12 @@
 #define XXBAlertViewInputTextSize                   16
 
 @interface XXBAlertView ()<UITextFieldDelegate>
+{
+    UIColor     *_backgroundShowColor;
+    UIColor     *_buttonTitleColor;
+    UIColor     *_buttonTitleColorHighlighted;
+    UIColor     *_buttonTitleColorDisable;
+}
 @property(nonatomic , strong)UIView                 *alertView;
 @property(nonatomic , strong)UILabel                *titleLabel;
 @property(nonatomic , strong)UILabel                *messageLabel;
@@ -165,6 +171,32 @@
     [self p_removeObserverOfTextView];
 }
 
+- (void)setButtonTitleColor:(UIColor *)buttonTitleColor {
+    _buttonTitleColor = buttonTitleColor;
+    for (UIButton *button in self.buttonArray ) {
+        [button setTitleColor:buttonTitleColor forState:UIControlStateNormal];
+    }
+}
+
+- (void)setButtonTitleColorHighlighted:(UIColor *)buttonTitleColorHighlighted {
+    _buttonTitleColorHighlighted = buttonTitleColorHighlighted;
+    for (UIButton *button in self.buttonArray ) {
+        [button setTitleColor:buttonTitleColorHighlighted forState:UIControlStateHighlighted];
+    }
+}
+
+- (void)setButtonTitleColorDisable:(UIColor *)buttonTitleColorDisable {
+    _buttonTitleColorDisable = buttonTitleColorDisable;
+    for (UIButton *button in self.buttonArray ) {
+        [button setTitleColor:buttonTitleColorDisable forState:UIControlStateDisabled];
+    }
+}
+
+- (void)setBackgroundShowColor:(UIColor *)backgroundShowColor {
+    _backgroundShowColor = backgroundShowColor;
+    self.backgroundColor = _backgroundShowColor;
+}
+
 - (UIColor *)backgroundShowColor {
     if (_backgroundShowColor == nil) {
         _backgroundShowColor = [UIColor colorWithWhite:0.0 alpha:0.36];
@@ -180,16 +212,14 @@
 }
 
 - (UIColor *)buttonTitleColorHighlighted {
-    if (_buttonTitleColorHighlighted == nil)
-    {
+    if (_buttonTitleColorHighlighted == nil) {
         _buttonTitleColorHighlighted = XXBColor(210, 110, 71);
     }
     return _buttonTitleColorHighlighted;
 }
 
 - (UIColor *)buttonTitleColorDisable {
-    if (_buttonTitleColorDisable == nil)
-    {
+    if (_buttonTitleColorDisable == nil) {
         _buttonTitleColorDisable = [UIColor grayColor];
     }
     return _buttonTitleColorDisable;
